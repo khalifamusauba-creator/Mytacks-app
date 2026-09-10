@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,10 +51,9 @@
             border-radius: 10px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.3s;
-        }
-        .btn-watch:active {
-            background-color: #006699;
+            display: block;
+            text-decoration: none;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -62,16 +61,12 @@
 
     <div class="card">
         <h1>Mytacks Earn</h1>
-        <p>Kalli talla domin samun lada (rewards) nan take!</p>
+        <p>Watch ads to earn instant rewards!</p>
         
-        <!-- Maimaita URL dinka na Monetag Direct Link a tsakiyar quotes din href below -->
-        <a href="https://google.com" target="_blank" style="text-decoration: none;">
-            <button class="btn-watch">📺 Watch Ad / Kalli Talla</button>
-        </a>
+        <a href="https://google.com" class="btn-watch" target="_blank">📺 Watch Ad</a>
     </div>
 
     <script>
-        // Tabbatar da cewa Telegram WebApp yana aiki
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.ready();
             window.Telegram.WebApp.expand();
