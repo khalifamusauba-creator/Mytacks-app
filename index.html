@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ha">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,22 +18,22 @@
     <h2>Mytacks Official Bot</h2>
     
     <div class="card">
-        <p>Akauntin kuɗinka (Balance):</p>
+        <p>Your Total Balance:</p>
         <div class="balance" id="balance">$0.00</div>
     </div>
 
     <div class="card">
         <h3>Watch Ads & Earn</h3>
-        <p>Kalli gajeren talla domin samun **$0.005** instant!</p>
-        <button class="btn" onclick="watchAd()">Kalli Talla (Watch Ad)</button>
+        <p>Watch a short video ad to earn **$0.005** instantly!</p>
+        <button class="btn" onclick="watchAd()">Watch Ad</button>
     </div>
 
     <script>
         let balance = 0.00;
 
         function watchAd() {
-            // A nan za mu saita Ad SDK (Monetag ko Adsterra)
-            alert("Talla yana fitowa... Bayan ka kalla za a ƙara maka $0.005");
+            // Ad SDK Integration spot
+            alert("Loading Ad... You will receive $0.005 reward upon completion.");
             
             // Simulating Reward
             balance += 0.005;
