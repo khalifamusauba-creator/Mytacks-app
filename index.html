@@ -1,43 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ha">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mytacks Watch-to-Earn</title>
+    <!-- Monetag Verification Tag -->
+    <meta name="monetag" content="09de06164f7668ad7074379f6306aea3">
+    
+    <title>Mytacks Earn App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #1a1a1a; color: white; text-align: center; padding: 20px; }
-        .card { background: #2a2a2a; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
-        .balance { font-size: 28px; color: #ffd700; font-weight: bold; }
-        .btn { background: #0088cc; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .btn:disabled { background: #555; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .card {
+            background-color: #1e1e1e;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 350px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #0088cc;
+        }
+        p {
+            font-size: 14px;
+            color: #cccccc;
+            margin-bottom: 20px;
+        }
+        .btn-watch {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .btn-watch:active {
+            background-color: #006699;
+        }
     </style>
 </head>
 <body>
 
-    <h2>Mytacks Official Bot</h2>
-    
     <div class="card">
-        <p>Your Total Balance:</p>
-        <div class="balance" id="balance">$0.00</div>
-    </div>
-
-    <div class="card">
-        <h3>Watch Ads & Earn</h3>
-        <p>Watch a short video ad to earn **$0.005** instantly!</p>
-        <button class="btn" onclick="watchAd()">Watch Ad</button>
+        <h1>Mytacks Earn</h1>
+        <p>Kalli talla domin samun lada (rewards) nan take!</p>
+        
+        <!-- Maimaita URL dinka na Monetag Direct Link a tsakiyar quotes din href below -->
+        <a href="https://google.com" target="_blank" style="text-decoration: none;">
+            <button class="btn-watch">📺 Watch Ad / Kalli Talla</button>
+        </a>
     </div>
 
     <script>
-        let balance = 0.00;
-
-        function watchAd() {
-            // Ad SDK Integration spot
-            alert("Loading Ad... You will receive $0.005 reward upon completion.");
-            
-            // Simulating Reward
-            balance += 0.005;
-            document.getElementById('balance').innerText = '$' + balance.toFixed(3);
+        // Tabbatar da cewa Telegram WebApp yana aiki
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
         }
     </script>
 </body>
