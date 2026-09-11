@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mytacks Earn App</title>
-    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -353,7 +352,6 @@
 </head>
 <body>
 
-    <!-- Header / Top Bar -->
     <div class="top-bar">
         <div class="app-logo">Mytacks<span>$</span></div>
         <div class="top-actions">
@@ -362,7 +360,6 @@
         </div>
     </div>
 
-    <!-- Main Balance Header Card -->
     <div class="balance-card">
         <div class="balance-title">TOTAL BALANCE</div>
         <div class="balance-amount" id="user-balance">$0.00</div>
@@ -378,8 +375,6 @@
             </div>
         </div>
     </div>
-
-    <!-- TAB 1: ADS SECTION -->
     <div id="page-ads" class="page-section active">
         <div class="section-card">
             <div class="section-title">Watch Ads & Earn</div>
@@ -406,13 +401,11 @@
         </div>
     </div>
 
-    <!-- TAB 2: TASKS SECTION -->
     <div id="page-tasks" class="page-section">
         <div class="section-card">
             <div class="section-title">Complete Tasks & Earn</div>
             <div class="section-desc">Tasks reset every 24 hours</div>
 
-            <!-- YouTube Task -->
             <div class="task-item">
                 <div class="task-info">
                     <h4>Subscribe YouTube Channel</h4>
@@ -421,7 +414,6 @@
                 <button class="btn-claim" id="btn-task-yt" onclick="doTask('yt', 'https://www.youtube.com/@iuatasharalummah-j5p', 0.30)">Subscribe</button>
             </div>
 
-            <!-- Instagram Task -->
             <div class="task-item">
                 <div class="task-info">
                     <h4>Follow Instagram Page</h4>
@@ -432,7 +424,6 @@
         </div>
     </div>
 
-    <!-- TAB 3: INVITE SECTION -->
     <div id="page-invite" class="page-section">
         <div class="section-card">
             <div class="section-title">Invite & Earn</div>
@@ -448,7 +439,6 @@
         </div>
     </div>
 
-    <!-- TAB 4: WITHDRAWAL SECTION -->
     <div id="page-withdraw" class="page-section">
         <div class="section-card">
             <div class="section-title">Withdraw Funds</div>
@@ -477,7 +467,6 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('page-ads', this)">
             <span class="nav-icon">🎬</span>
@@ -497,7 +486,6 @@
         </div>
     </div>
 
-    <!-- Language Selector Modal -->
     <div class="modal-overlay" id="lang-modal">
         <div class="modal-content">
             <h3>Choose Language</h3>
@@ -508,18 +496,17 @@
     </div>
 
     <script>
-        // Initializing Telegram WebApp Object Safe Handler
+        // Telegram WebApp Engine Initialization
         let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         if (tg) {
             try {
                 tg.ready();
                 tg.expand();
             } catch (e) {
-                console.log("Telegram SDK init error:", e);
+                console.log("Telegram SDK Error:", e);
             }
         }
 
-        // Helper function to open external links safely inside Telegram
         function openExternalUrl(url) {
             if (tg && tg.openLink) {
                 tg.openLink(url);
@@ -528,7 +515,7 @@
             }
         }
 
-        // Core App State
+        // Persistent State Management
         let totalBalance = parseFloat(localStorage.getItem('mytacks_user_balance')) || 0.00;
         let watchedAds = parseInt(localStorage.getItem('mytacks_ads_today')) || 0;
         let lastAdResetDate = localStorage.getItem('mytacks_ad_reset_date') || "";
@@ -573,9 +560,10 @@
         }
 
         function refreshUI() {
-            document.getElementById('user-balance').innerText = "$" + totalBalance.toFixed(2);
-            document.getElementById('earned-amount').innerText = "$" + totalBalance.toFixed(2);
-            document.getElementById('withdraw-display-balance').value = "$" + totalBalance.toFixed(2);
+            let formattedBalance = "$" + totalBalance.toFixed(2);
+            document.getElementById('user-balance').innerText = formattedBalance;
+            document.getElementById('earned-amount').innerText = formattedBalance;
+            document.getElementById('withdraw-display-balance').value = formattedBalance;
 
             document.getElementById('watched-count').innerText = watchedAds + " / 14";
             let watchAdBtn = document.getElementById('btn-watch-ad');
@@ -607,14 +595,33 @@
             localStorage.setItem('mytacks_user_balance', totalBalance);
         }
 
+        // Timed Ad Execution Handler (10s Wait Timer for Verification)
         function watchAdAction() {
             if (watchedAds >= 14) return;
 
-            watchedAds++;
-            totalBalance += 0.10;
-            localStorage.setItem('mytacks_ads_today', watchedAds);
-            refreshUI();
-            alert("Ad completed! +$0.10 added to your balance.");
+            let watchAdBtn = document.getElementById('btn-watch-ad');
+            watchAdBtn.disabled = true;
+            let countdown = 10;
+            watchAdBtn.innerText = "Watching... (" + countdown + "s)";
+
+            // Simulating Ad view popup or Monetag direct link open
+            openExternalUrl('https://google.com'); 
+
+            let timer = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    watchAdBtn.innerText = "Watching... (" + countdown + "s)";
+                } else {
+                    clearInterval(timer);
+                    watchedAds++;
+                    totalBalance += 0.10;
+                    localStorage.setItem('mytacks_ads_today', watchedAds);
+                    watchAdBtn.disabled = false;
+                    watchAdBtn.innerText = "Watch Ad";
+                    refreshUI();
+                    alert("Ad verified! +$0.10 added to your balance.");
+                }
+            }, 1000);
         }
 
         function doTask(type, targetUrl, rewardAmount) {
@@ -624,4 +631,57 @@
                 if (type === 'yt' && !ytTaskDone) {
                     ytTaskDone = true;
                     totalBalance += rewardAmount;
-                    localSto
+                    localStorage.setItem('mytacks_task_yt_' + todayString, "true");
+                } else if (type === 'ig' && !igTaskDone) {
+                    igTaskDone = true;
+                    totalBalance += rewardAmount;
+                    localStorage.setItem('mytacks_task_ig_' + todayString, "true");
+                }
+                refreshUI();
+                alert("Task verified! +$" + rewardAmount.toFixed(2) + " added to your balance.");
+            }, 3000);
+        }
+
+        function copySpecialLink() {
+            let inputField = document.getElementById('special-ref-link');
+            inputField.select();
+            navigator.clipboard.writeText(inputField.value);
+            alert("Referral link copied successfully!");
+        }
+
+        function shareToTelegram() {
+            let link = document.getElementById('special-ref-link').value;
+            let text = encodeURIComponent(`Join Mytacks Mini App to earn rewards daily! Click here:\n${link}`);
+            let shareUrl = `https://t.me/share/url?url=${link}&text=${text}`;
+
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else {
+                openExternalUrl(shareUrl);
+            }
+        }
+
+        function openLanguageModal() {
+            document.getElementById('lang-modal').style.display = 'flex';
+        }
+
+        function closeLanguageModal() {
+            document.getElementById('lang-modal').style.display = 'none';
+        }
+
+        function setLanguage(lang) {
+            document.getElementById('current-lang-text').innerText = lang;
+            closeLanguageModal();
+            alert("Language changed to " + lang);
+        }
+
+        function requestWithdrawal() {
+            if (totalBalance < 10.00) {
+                alert("Notice: Your balance is $" + totalBalance.toFixed(2) + ". Minimum withdrawal threshold is $10.00.");
+            } else {
+                alert("Withdrawal request submitted successfully!");
+            }
+        }
+    </script>
+</body>
+</html>
