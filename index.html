@@ -24,7 +24,6 @@
             padding-bottom: 90px;
         }
 
-        /* Top Bar Header */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -63,7 +62,6 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
 
-        /* Main Balance Card */
         .balance-card {
             background: linear-gradient(135deg, #2c271e 0%, #15130f 100%);
             border-radius: 20px;
@@ -135,7 +133,6 @@
             color: #8a8175;
         }
 
-        /* Section Cards */
         .page-section {
             display: none;
         }
@@ -165,7 +162,6 @@
             margin-bottom: 16px;
         }
 
-        /* Task Items */
         .task-item {
             background: #f8f9fa;
             border: 1px solid #edf2f7;
@@ -188,7 +184,6 @@
             color: #7f8c8d;
         }
 
-        /* Green Button -> White Completed Button */
         .btn-claim {
             background-color: #27ae60;
             color: #ffffff;
@@ -208,7 +203,6 @@
             cursor: not-allowed;
         }
 
-        /* Ads Container */
         .ad-box {
             background: #f8f9fa;
             border: 1px solid #edf2f7;
@@ -225,7 +219,6 @@
             border-color: #fed7d7;
         }
 
-        /* Form Controls */
         .form-group {
             margin-bottom: 14px;
         }
@@ -265,7 +258,6 @@
             gap: 8px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -294,7 +286,6 @@
             color: #2d3748;
         }
 
-        /* Language Modal */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -327,7 +318,6 @@
             font-weight: 600;
         }
 
-        /* Bottom Nav Bar */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -367,14 +357,12 @@
     <div class="top-bar">
         <div class="app-logo">Mytacks<span>$</span></div>
         <div class="top-actions">
-            <!-- Active Support Button -->
-            <a href="https://t.me/iuatasharalummah" target="_blank" class="action-btn">💬 Support</a>
-            <!-- Active Language Selector Modal Trigger -->
+            <button onclick="openExternalUrl('https://t.me/iuatasharalummah')" class="action-btn">💬 Support</button>
             <div class="action-btn" onclick="openLanguageModal()">🌐 <span id="current-lang-text">English</span></div>
         </div>
     </div>
 
-    <!-- Main Dynamic Balance Header Card -->
+    <!-- Main Balance Header Card -->
     <div class="balance-card">
         <div class="balance-title">TOTAL BALANCE</div>
         <div class="balance-amount" id="user-balance">$0.00</div>
@@ -385,7 +373,6 @@
                 <div class="user-name" id="user-name">User</div>
                 <div class="user-id" id="user-id">ID: 000000</div>
             </div>
-            <!-- User Telegram Profile Image & Unique ID -->
             <div id="avatar-container">
                 <div class="user-avatar" id="user-avatar">U</div>
             </div>
@@ -425,7 +412,7 @@
             <div class="section-title">Complete Tasks & Earn</div>
             <div class="section-desc">Tasks reset every 24 hours</div>
 
-            <!-- YouTube Channel Task -->
+            <!-- YouTube Task -->
             <div class="task-item">
                 <div class="task-info">
                     <h4>Subscribe YouTube Channel</h4>
@@ -434,7 +421,7 @@
                 <button class="btn-claim" id="btn-task-yt" onclick="doTask('yt', 'https://www.youtube.com/@iuatasharalummah-j5p', 0.30)">Subscribe</button>
             </div>
 
-            <!-- Instagram Follow Task -->
+            <!-- Instagram Task -->
             <div class="task-item">
                 <div class="task-info">
                     <h4>Follow Instagram Page</h4>
@@ -445,7 +432,7 @@
         </div>
     </div>
 
-    <!-- TAB 3: INVITE / SHARE SECTION -->
+    <!-- TAB 3: INVITE SECTION -->
     <div id="page-invite" class="page-section">
         <div class="section-card">
             <div class="section-title">Invite & Earn</div>
@@ -510,7 +497,7 @@
         </div>
     </div>
 
-    <!-- Language Selector Popup Modal -->
+    <!-- Language Selector Modal -->
     <div class="modal-overlay" id="lang-modal">
         <div class="modal-content">
             <h3>Choose Language</h3>
@@ -521,14 +508,32 @@
     </div>
 
     <script>
-        // Core State Variables
+        // Initializing Telegram WebApp Object Safe Handler
+        let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if (tg) {
+            try {
+                tg.ready();
+                tg.expand();
+            } catch (e) {
+                console.log("Telegram SDK init error:", e);
+            }
+        }
+
+        // Helper function to open external links safely inside Telegram
+        function openExternalUrl(url) {
+            if (tg && tg.openLink) {
+                tg.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        // Core App State
         let totalBalance = parseFloat(localStorage.getItem('mytacks_user_balance')) || 0.00;
         let watchedAds = parseInt(localStorage.getItem('mytacks_ads_today')) || 0;
         let lastAdResetDate = localStorage.getItem('mytacks_ad_reset_date') || "";
-        
         let todayString = new Date().toDateString();
 
-        // 24-Hour Reset Timer Logic for Ads & Tasks
         if (lastAdResetDate !== todayString) {
             watchedAds = 0;
             localStorage.setItem('mytacks_ads_today', 0);
@@ -539,34 +544,24 @@
 
         let ytTaskDone = localStorage.getItem('mytacks_task_yt_' + todayString) === "true";
         let igTaskDone = localStorage.getItem('mytacks_task_ig_' + todayString) === "true";
-
         let currentUserId = "6433995059";
 
-        // Initialize Telegram User Profile Data & Avatar
-        let tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.ready();
-            tg.expand();
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            let user = tg.initDataUnsafe.user;
+            currentUserId = user.id || currentUserId;
 
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                let user = tg.initDataUnsafe.user;
-                currentUserId = user.id || currentUserId;
+            document.getElementById('user-name').innerText = user.first_name || "User";
+            document.getElementById('user-id').innerText = "ID: " + currentUserId;
 
-                document.getElementById('user-name').innerText = user.first_name || "User";
-                document.getElementById('user-id').innerText = "ID: " + currentUserId;
-
-                if (user.photo_url) {
-                    document.getElementById('avatar-container').innerHTML = `<img src="${user.photo_url}" class="user-avatar" alt="User Profile">`;
-                } else {
-                    document.getElementById('user-avatar').innerText = user.first_name ? user.first_name.charAt(0).toUpperCase() : "U";
-                }
+            if (user.photo_url) {
+                document.getElementById('avatar-container').innerHTML = `<img src="${user.photo_url}" class="user-avatar" alt="User Profile">`;
+            } else {
+                document.getElementById('user-avatar').innerText = user.first_name ? user.first_name.charAt(0).toUpperCase() : "U";
             }
         }
 
-        // Set Special Unique Referral Link
         document.getElementById('special-ref-link').value = `https://t.me/MytacksBot?startapp=${currentUserId}`;
 
-        // Initial UI Render
         refreshUI();
 
         function switchTab(pageId, navElement) {
@@ -578,12 +573,10 @@
         }
 
         function refreshUI() {
-            // Show exact total balance
             document.getElementById('user-balance').innerText = "$" + totalBalance.toFixed(2);
             document.getElementById('earned-amount').innerText = "$" + totalBalance.toFixed(2);
             document.getElementById('withdraw-display-balance').value = "$" + totalBalance.toFixed(2);
 
-            // Manage 14 Ads Limit & Clock Display ⌚
             document.getElementById('watched-count').innerText = watchedAds + " / 14";
             let watchAdBtn = document.getElementById('btn-watch-ad');
             let adCard = document.getElementById('ad-card');
@@ -597,7 +590,6 @@
                 adCard.classList.add('limit-reached');
             }
 
-            // Manage Tasks Green vs White state
             let ytBtn = document.getElementById('btn-task-yt');
             if (ytTaskDone) {
                 ytBtn.innerText = "✓ Done";
@@ -612,14 +604,24 @@
                 igBtn.onclick = null;
             }
 
-            // Persist balance
             localStorage.setItem('mytacks_user_balance', totalBalance);
         }
 
-        // Watch Ad Handler
         function watchAdAction() {
             if (watchedAds >= 14) return;
 
             watchedAds++;
             totalBalance += 0.10;
-            localStorag
+            localStorage.setItem('mytacks_ads_today', watchedAds);
+            refreshUI();
+            alert("Ad completed! +$0.10 added to your balance.");
+        }
+
+        function doTask(type, targetUrl, rewardAmount) {
+            openExternalUrl(targetUrl);
+
+            setTimeout(() => {
+                if (type === 'yt' && !ytTaskDone) {
+                    ytTaskDone = true;
+                    totalBalance += rewardAmount;
+                    localSto
