@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ha">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,6 +61,7 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
+            text-decoration: none;
         }
 
         /* Main Balance Card */
@@ -107,8 +108,8 @@
         }
 
         .user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background-color: #d4af37;
             display: flex;
@@ -116,6 +117,8 @@
             justify-content: center;
             font-weight: bold;
             color: #15130f;
+            object-fit: cover;
+            border: 2px solid #e6c673;
         }
 
         .user-info {
@@ -186,8 +189,9 @@
             color: #7f8c8d;
         }
 
+        /* Task Green & Done Dynamic Styling */
         .btn-claim {
-            background-color: #d4af37;
+            background-color: #27ae60;
             color: #ffffff;
             border: none;
             padding: 8px 14px;
@@ -199,8 +203,10 @@
             display: inline-block;
         }
 
-        .btn-claim.disabled {
-            background-color: #cbd5e0;
+        .btn-claim.completed {
+            background-color: #ffffff !important;
+            color: #bdc3c7 !important;
+            border: 1px solid #e2e8f0;
             cursor: not-allowed;
         }
 
@@ -215,6 +221,13 @@
             justify-content: space-between;
             text-decoration: none;
             color: inherit;
+            cursor: pointer;
+        }
+
+        .ad-box.disabled {
+            background: #f1f2f6;
+            cursor: not-allowed;
+            opacity: 0.8;
         }
 
         /* Input Controls */
@@ -250,6 +263,10 @@
             font-weight: 700;
             cursor: pointer;
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         /* Stats Grid */
@@ -323,8 +340,10 @@
     <div class="top-bar">
         <div class="app-logo">Mytacks<span>$</span></div>
         <div class="top-actions">
-            <div class="action-btn">💬 Support</div>
-            <div class="action-btn">🌐 English</div>
+            <!-- Dynamic Support Link -->
+            <a href="https://t.me/iuatasharalummah" target="_blank" class="action-btn">💬 Support</a>
+            <!-- Language Switcher Alert -->
+            <div class="action-btn" onclick="toggleLanguage()">🌐 <span id="lang-text">English</span></div>
         </div>
     </div>
 
@@ -339,7 +358,10 @@
                 <div class="user-name" id="user-name">User</div>
                 <div class="user-id" id="user-id">ID: 000000</div>
             </div>
-            <div class="user-avatar" id="user-avatar">U</div>
+            <!-- Dynamic User Avatar / Photo -->
+            <div id="avatar-container">
+                <div class="user-avatar" id="user-avatar">U</div>
+            </div>
         </div>
     </div>
 
@@ -347,24 +369,24 @@
     <div id="page-ads" class="page-section active">
         <div class="section-card">
             <div class="section-title">Watch Ads & Earn</div>
-            <div class="section-desc">Watch short ads to earn instantly</div>
+            <div class="section-desc">Daily limit: 14 Ads per 24 Hours</div>
 
             <!-- Monetag Direct Link -->
-            <a href="https://omg10.com/4/11775853" class="ad-box" id="ad-link" target="_blank" onclick="registerAdClick()">
+            <a href="https://omg10.com/4/11775853" class="ad-box" id="ad-btn" target="_blank" onclick="handleAdClick(event)">
                 <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="width:40px; height:40px; background:#1a2530; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center;">▶</div>
+                    <div id="ad-icon-box" style="width:40px; height:40px; background:#1a2530; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center;">▶</div>
                     <div>
-                        <h4 style="font-size:14px; font-weight:700;">Watch Ad</h4>
-                        <p style="font-size:11px; color:#7f8c8d;">Earn per view</p>
+                        <h4 style="font-size:14px; font-weight:700;" id="ad-title">Watch Ad</h4>
+                        <p style="font-size:11px; color:#7f8c8d;" id="ad-status-desc">Earn per view</p>
                     </div>
                 </div>
-                <div style="background:#1a2530; color:#fff; padding:6px 12px; border-radius:10px; font-weight:700; font-size:12px;">+$0.10</div>
+                <div id="ad-reward-badge" style="background:#1a2530; color:#fff; padding:6px 12px; border-radius:10px; font-weight:700; font-size:12px;">+$0.10</div>
             </a>
 
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="stat-label">Total Watched</div>
-                    <div class="stat-value" id="watched-count">0 ads</div>
+                    <div class="stat-label">Watched Today</div>
+                    <div class="stat-value" id="watched-count">0 / 14</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">Total Earned</div>
@@ -378,7 +400,7 @@
     <div id="page-tasks" class="page-section">
         <div class="section-card">
             <div class="section-title">Daily Social Tasks</div>
-            <div class="section-desc">Complete tasks below to boost your earnings</div>
+            <div class="section-desc">Complete daily tasks to boost earnings</div>
 
             <!-- Daily Check-in -->
             <div class="task-item">
@@ -395,7 +417,7 @@
                     <h4>Subscribe YouTube Channel</h4>
                     <p>Visit & Subscribe (+ $0.30)</p>
                 </div>
-                <a href="https://www.youtube.com/@iuatasharalummah-j5p" target="_blank" class="btn-claim" id="btn-yt" onclick="completeSocialTask('yt', 0.30)">Subscribe</a>
+                <button class="btn-claim" id="btn-yt" onclick="openAndClaimTask('https://www.youtube.com/@iuatasharalummah-j5p', 'yt', 0.30)">Subscribe</button>
             </div>
 
             <!-- Instagram Task -->
@@ -404,16 +426,7 @@
                     <h4>Follow Instagram Page</h4>
                     <p>Visit & Follow (+ $0.30)</p>
                 </div>
-                <a href="https://www.instagram.com/iuasunnahshow?stkn=eHdsajZpbHlucmQ2" target="_blank" class="btn-claim" id="btn-ig" onclick="completeSocialTask('ig', 0.30)">Follow</a>
-            </div>
-
-            <!-- Ads Challenge -->
-            <div class="task-item">
-                <div class="task-info">
-                    <h4>Watch 5 Ads Challenge</h4>
-                    <p>Reward (+ $0.50)</p>
-                </div>
-                <button class="btn-claim disabled" id="btn-task-ads">Incomplete</button>
+                <button class="btn-claim" id="btn-ig" onclick="openAndClaimTask('https://www.instagram.com/iuasunnahshow?stkn=eHdsajZpbHlucmQ2', 'ig', 0.30)">Follow</button>
             </div>
         </div>
     </div>
@@ -425,10 +438,12 @@
             <div class="section-desc">Earn <strong>$0.50</strong> for every friend who joins using your link!</div>
 
             <div class="form-group">
-                <label>Your Personal Referral Link</label>
+                <label>Your Special Referral Link</label>
                 <input type="text" class="form-control" id="referral-link" readonly value="https://t.me/MytacksBot?start=000000">
             </div>
-            <button class="btn-action" onclick="copyReferralLink()">Copy Referral Link</button>
+            
+            <button class="btn-action" onclick="copyReferralLink()">📋 Copy Special Link</button>
+            <button class="btn-action" style="background-color: #2AABEE;" onclick="shareToTelegram()">✈️ Share to Telegram</button>
 
             <div class="stats-grid" style="margin-top:16px;">
                 <div class="stat-box">
@@ -465,7 +480,8 @@
 
             <div class="form-group">
                 <label>Amount ($)</label>
-                <input type="number" class="form-control" placeholder="Min 10.00">
+                <!-- Shows current balance automatically -->
+                <input type="number" class="form-control" id="withdraw-amount-input" placeholder="Min 10.00">
             </div>
 
             <button class="btn-action" onclick="processWithdrawal()">Submit Withdrawal</button>
@@ -493,14 +509,26 @@
     </div>
 
     <script>
-        // App State Variables
-        let totalBalance = 0.00;
-        let watchedAds = 0;
-        let dailyClaimed = false;
-        let ytDone = false;
-        let igDone = false;
+        // State Storage Local Data
+        let totalBalance = parseFloat(localStorage.getItem('mytacks_balance')) || 0.00;
+        let watchedAds = parseInt(localStorage.getItem('mytacks_ads_today')) || 0;
+        let lastAdDate = localStorage.getItem('mytacks_ad_date') || "";
 
-        // Telegram Integration
+        // Reset Daily Ads Limit (14 per 24 hours / new calendar day)
+        let todayStr = new Date().toDateString();
+        if (lastAdDate !== todayStr) {
+            watchedAds = 0;
+            localStorage.setItem('mytacks_ads_today', 0);
+            localStorage.setItem('mytacks_ad_date', todayStr);
+        }
+
+        let dailyClaimed = localStorage.getItem('mytacks_daily_' + todayStr) === "true";
+        let ytDone = localStorage.getItem('mytacks_yt_done') === "true";
+        let igDone = localStorage.getItem('mytacks_ig_done') === "true";
+
+        let userTelegramId = "000000";
+
+        // Telegram WebApp Integration
         let tg = window.Telegram.WebApp;
         if (tg) {
             tg.ready();
@@ -508,14 +536,26 @@
 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 let user = tg.initDataUnsafe.user;
+                userTelegramId = user.id || "000000";
+                
                 document.getElementById('user-name').innerText = user.first_name || "User";
-                document.getElementById('user-id').innerText = "ID: " + (user.id || "000000");
-                document.getElementById('user-avatar').innerText = (user.first_name ? user.first_name.charAt(0) : "U");
-                document.getElementById('referral-link').value = "https://t.me/MytacksBot?start=" + user.id;
+                document.getElementById('user-id').innerText = "ID: " + userTelegramId;
+
+                // Photo Handling
+                if (user.photo_url) {
+                    document.getElementById('avatar-container').innerHTML = `<img src="${user.photo_url}" class="user-avatar" alt="Profile">`;
+                } else {
+                    document.getElementById('user-avatar').innerText = (user.first_name ? user.first_name.charAt(0) : "U");
+                }
+
+                // Special Referral Link Creation
+                document.getElementById('referral-link').value = `https://t.me/MytacksBot?start=ref_${userTelegramId}`;
             }
         }
 
-        // Navigation Switcher
+        // Initialize UI Elements
+        updateUI();
+
         function switchTab(pageId, element) {
             document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -524,88 +564,44 @@
             element.classList.add('active');
         }
 
-        // Update Balance UI
         function updateUI() {
+            // Update Balance Display Across App
             document.getElementById('user-balance').innerText = "$" + totalBalance.toFixed(2);
             document.getElementById('earned-amount').innerText = "$" + totalBalance.toFixed(2);
-            document.getElementById('watched-count').innerText = watchedAds + " ads";
+            document.getElementById('withdraw-amount-input').value = totalBalance > 0 ? totalBalance.toFixed(2) : "";
 
-            // Check Task Progress
-            if (watchedAds >= 5) {
-                let taskBtn = document.getElementById('btn-task-ads');
-                if (taskBtn.innerText !== "Claimed") {
-                    taskBtn.classList.remove('disabled');
-                    taskBtn.innerText = "Claim +$0.50";
-                    taskBtn.onclick = function() {
-                        totalBalance += 0.50;
-                        taskBtn.innerText = "Claimed";
-                        taskBtn.classList.add('disabled');
-                        taskBtn.onclick = null;
-                        updateUI();
-                    };
-                }
+            // Update Ads Logic & Limit (14 per day)
+            document.getElementById('watched-count').innerText = watchedAds + " / 14";
+            let adBtn = document.getElementById('ad-btn');
+            
+            if (watchedAds >= 14) {
+                adBtn.classList.add('disabled');
+                document.getElementById('ad-title').innerText = "Limit Reached ⌚";
+                document.getElementById('ad-status-desc').innerText = "Available again in 24h";
+                document.getElementById('ad-reward-badge').innerText = "Completed";
+                document.getElementById('ad-icon-box').innerText = "⌚";
             }
-        }
 
-        // Register Ad Click
-        function registerAdClick() {
-            watchedAds++;
-            totalBalance += 0.10;
-            updateUI();
-        }
-
-        // Claim Daily Bonus
-        function claimDailyBonus() {
-            if (!dailyClaimed) {
-                totalBalance += 0.20;
-                dailyClaimed = true;
-                let btn = document.getElementById('btn-daily');
-                btn.innerText = "Claimed";
-                btn.classList.add('disabled');
-                btn.onclick = null;
-                updateUI();
-                alert("Morning Bonus Claimed! +$0.20");
+            // Tasks Status Update (Green to White)
+            let btnDaily = document.getElementById('btn-daily');
+            if (dailyClaimed) {
+                btnDaily.innerText = "Done";
+                btnDaily.classList.add('completed');
+                btnDaily.onclick = null;
             }
-        }
 
-        // Social Media Tasks
-        function completeSocialTask(type, reward) {
-            if (type === 'yt' && !ytDone) {
-                ytDone = true;
-                totalBalance += reward;
-                let btn = document.getElementById('btn-yt');
-                btn.innerText = "Done";
-                btn.classList.add('disabled');
-                btn.onclick = function(e){ e.preventDefault(); };
-                updateUI();
-            } else if (type === 'ig' && !igDone) {
-                igDone = true;
-                totalBalance += reward;
-                let btn = document.getElementById('btn-ig');
-                btn.innerText = "Done";
-                btn.classList.add('disabled');
-                btn.onclick = function(e){ e.preventDefault(); };
-                updateUI();
+            let btnYt = document.getElementById('btn-yt');
+            if (ytDone) {
+                btnYt.innerText = "Done";
+                btnYt.classList.add('completed');
+                btnYt.onclick = null;
             }
-        }
 
-        // Copy Referral Link
-        function copyReferralLink() {
-            let copyText = document.getElementById("referral-link");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(copyText.value);
-            alert("Referral Link copied: " + copyText.value);
-        }
-
-        // Process Withdrawal
-        function processWithdrawal() {
-            if (totalBalance < 10.00) {
-                alert("Withdrawal Failed: Your balance is below the $10.00 minimum threshold.");
-            } else {
-                alert("Withdrawal Request Submitted Successfully!");
+            let btnIg = document.getElementById('btn-ig');
+            if (igDone) {
+                btnIg.innerText = "Done";
+                btnIg.classList.add('completed');
+                btnIg.onclick = null;
             }
-        }
-    </script>
-</body>
-    </html>
+
+         
