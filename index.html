@@ -9,68 +9,560 @@
     <title>Mytacks Earn App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
+            background-color: #f7f9fc;
+            color: #333333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 16px;
+            padding-bottom: 90px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .app-logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1a2530;
+        }
+
+        .app-logo span {
+            color: #d4af37;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background-color: #fff8e7;
+            border: 1px solid #ffe8b3;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #8a6d3b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        /* Main Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, #2c271e 0%, #15130f 100%);
+            border-radius: 20px;
+            padding: 20px;
             color: #ffffff;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            border: 1px solid #423828;
+        }
+
+        .balance-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #c5a059;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #e6c673;
+            margin-bottom: 4px;
+        }
+
+        .balance-subtitle {
+            font-size: 12px;
+            color: #a09585;
+            margin-bottom: 16px;
+        }
+
+        .user-profile {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #d4af37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #15130f;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .user-id {
+            font-size: 10px;
+            color: #8a8175;
+        }
+
+        /* Pages / Sections */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a2530;
+            margin-bottom: 4px;
+        }
+
+        .section-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-bottom: 16px;
+        }
+
+        /* Items List & Buttons */
+        .task-item {
+            background: #f8f9fa;
+            border: 1px solid #edf2f7;
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .task-info h4 {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 700;
+        }
+
+        .task-info p {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        .btn-claim {
+            background-color: #d4af37;
+            color: #ffffff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-claim.disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Ad Box */
+        .ad-box {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e4e9f0 100%);
+            border: 1px solid #d0d7de;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Input Controls */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4a5568;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-action {
+            width: 100%;
+            background-color: #1a2530;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 14px;
+            border: 1px solid #edf2f7;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #a0aec0;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: #2d3748;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #edf2f7;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+            z-index: 100;
+        }
+
+        .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .card {
-            background-color: #1e1e1e;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            max-width: 350px;
-            width: 100%;
-        }
-        h1 {
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: #0088cc;
-        }
-        p {
-            font-size: 14px;
-            color: #cccccc;
-            margin-bottom: 20px;
-        }
-        .btn-watch {
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            display: block;
+            font-size: 10px;
+            color: #a0aec0;
             text-decoration: none;
-            box-sizing: border-box;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #d4af37;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>Mytacks Earn</h1>
-        <p>Watch ads to earn instant rewards!</p>
-        
-        <a href="https://omg10.com/4/11775853" class="btn-watch" target="_blank">📺 Watch Ad</a>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="app-logo">Mytacks<span>$</span></div>
+        <div class="top-actions">
+            <div class="action-btn">💬 Support</div>
+            <div class="action-btn">🌐 English</div>
+        </div>
+    </div>
+
+    <!-- Main Balance Card -->
+    <div class="balance-card">
+        <div class="balance-title">Total Balance</div>
+        <div class="balance-amount" id="user-balance">$0.00</div>
+        <div class="balance-subtitle">Min Withdraw: $10.00</div>
+
+        <div class="user-profile">
+            <div class="user-info">
+                <div class="user-name" id="user-name">User</div>
+                <div class="user-id" id="user-id">ID: 000000</div>
+            </div>
+            <div class="user-avatar" id="user-avatar">U</div>
+        </div>
+    </div>
+
+    <!-- PAGE 1: ADS PAGE -->
+    <div id="page-ads" class="page-section active">
+        <div class="section-card">
+            <div class="section-title">Watch Ads & Earn</div>
+            <div class="section-desc">Watch short ads to earn instantly</div>
+
+            <!-- Monetag Direct Link -->
+            <a href="https://omg10.com/4/11775853" class="ad-box" id="ad-link" target="_blank" onclick="registerAdClick()">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="width:40px; height:40px; background:#1a2530; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center;">▶</div>
+                    <div>
+                        <h4 style="font-size:14px; font-weight:700;">Watch Ad</h4>
+                        <p style="font-size:11px; color:#7f8c8d;">Earn per view</p>
+                    </div>
+                </div>
+                <div style="background:#1a2530; color:#fff; padding:6px 12px; border-radius:10px; font-weight:700; font-size:12px;">+$0.10</div>
+            </a>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Total Watched</div>
+                    <div class="stat-value" id="watched-count">0 ads</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Earned</div>
+                    <div class="stat-value" id="earned-amount">$0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: TASKS PAGE -->
+    <div id="page-tasks" class="page-section">
+        <div class="section-card">
+            <div class="section-title">Daily Morning Tasks</div>
+            <div class="section-desc">Complete daily tasks to boost earnings</div>
+
+            <div class="task-item">
+                <div class="task-info">
+                    <h4>Daily Check-in</h4>
+                    <p>Claim daily bonus (+ $0.20)</p>
+                </div>
+                <button class="btn-claim" id="btn-daily" onclick="claimDailyBonus()">Claim</button>
+            </div>
+
+            <div class="task-item">
+                <div class="task-info">
+                    <h4>Watch 5 Ads Challenge</h4>
+                    <p>Reward (+ $0.50)</p>
+                </div>
+                <button class="btn-claim disabled" id="btn-task-ads">Incomplete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: INVITE PAGE -->
+    <div id="page-invite" class="page-section">
+        <div class="section-card">
+            <div class="section-title">Invite Friends & Earn</div>
+            <div class="section-desc">Earn <strong>$0.50</strong> for every friend who joins using your link!</div>
+
+            <div class="form-group">
+                <label>Your Personal Referral Link</label>
+                <input type="text" class="form-control" id="referral-link" readonly value="https://t.me/MytacksBot?start=000000">
+            </div>
+            <button class="btn-action" onclick="copyReferralLink()">Copy Referral Link</button>
+
+            <div class="stats-grid" style="margin-top:16px;">
+                <div class="stat-box">
+                    <div class="stat-label">Total Invited</div>
+                    <div class="stat-value" id="invited-count">0 Users</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Ref Earnings</div>
+                    <div class="stat-value" id="ref-earned">$0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 4: WITHDRAW PAGE -->
+    <div id="page-withdraw" class="page-section">
+        <div class="section-card">
+            <div class="section-title">Withdraw Funds</div>
+            <div class="section-desc">Minimum Withdrawal Threshold is <strong>$10.00</strong></div>
+
+            <div class="form-group">
+                <label>Payment Method</label>
+                <select class="form-control">
+                    <option>USDT (TRC20)</option>
+                    <option>TON Wallet</option>
+                    <option>Payeer</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Wallet Address</label>
+                <input type="text" class="form-control" placeholder="Enter your wallet address">
+            </div>
+
+            <div class="form-group">
+                <label>Amount ($)</label>
+                <input type="number" class="form-control" placeholder="Min 10.00">
+            </div>
+
+            <button class="btn-action" onclick="processWithdrawal()">Submit Withdrawal</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('page-ads', this)">
+            <span class="nav-icon">🎬</span>
+            <span>Ads</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('page-tasks', this)">
+            <span class="nav-icon">📋</span>
+            <span>Tasks</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('page-invite', this)">
+            <span class="nav-icon">👥</span>
+            <span>Invite</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('page-withdraw', this)">
+            <span class="nav-icon">💰</span>
+            <span>Withdraw</span>
+        </div>
     </div>
 
     <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
+        // App State Variables
+        let totalBalance = 0.00;
+        let watchedAds = 0;
+        let invitedUsers = 0;
+        let dailyClaimed = false;
+
+        // Telegram Integration
+        let tg = window.Telegram.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                let user = tg.initDataUnsafe.user;
+                document.getElementById('user-name').innerText = user.first_name || "User";
+                document.getElementById('user-id').innerText = "ID: " + (user.id || "000000");
+                document.getElementById('user-avatar').innerText = (user.first_name ? user.first_name.charAt(0) : "U");
+                document.getElementById('referral-link').value = "https://t.me/MytacksBot?start=" + user.id;
+            }
+        }
+
+        // Navigation Switcher
+        function switchTab(pageId, element) {
+            document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // Update Balance UI
+        function updateUI() {
+            document.getElementById('user-balance').innerText = "$" + totalBalance.toFixed(2);
+            document.getElementById('earned-amount').innerText = "$" + totalBalance.toFixed(2);
+            document.getElementById('watched-count').innerText = watchedAds + " ads";
+
+            // Check Task Progress
+            if (watchedAds >= 5) {
+                let taskBtn = document.getElementById('btn-task-ads');
+                if (taskBtn.innerText !== "Claimed") {
+                    taskBtn.classList.remove('disabled');
+                    taskBtn.innerText = "Claim +$0.50";
+                    taskBtn.onclick = function() {
+                        totalBalance += 0.50;
+                        taskBtn.innerText = "Claimed";
+                        taskBtn.classList.add('disabled');
+                        taskBtn.onclick = null;
+                        updateUI();
+                    };
+                }
+            }
+        }
+
+        // Register Ad Click
+        function registerAdClick() {
+            watchedAds++;
+            totalBalance += 0.10;
+            updateUI();
+        }
+
+        // Claim Daily Bonus
+        function claimDailyBonus() {
+            if (!dailyClaimed) {
+                totalBalance += 0.20;
+                dailyClaimed = true;
+                let btn = document.getElementById('btn-daily');
+                btn.innerText = "Claimed";
+                btn.classList.add('disabled');
+                btn.onclick = null;
+                updateUI();
+                alert("Morning Bonus Claimed! +$0.20");
+            }
+        }
+
+        // Copy Referral Link
+        function copyReferralLink() {
+            let copyText = document.getElementById("referral-link");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            alert("Referral Link copied: " + copyText.value);
+        }
+
+        // Process Withdrawal
+        function processWithdrawal() {
+            if (totalBalance < 10.00) {
+                alert("Withdrawal Failed: Your balance is below the $10.00 minimum threshold.");
+            } else {
+                alert("Withdrawal Request Submitted Successfully!");
+            }
         }
     </script>
 </body>
-</html>
+    </html>
