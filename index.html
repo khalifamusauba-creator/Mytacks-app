@@ -196,6 +196,7 @@
             font-size: 12px;
             cursor: pointer;
             text-decoration: none;
+            display: inline-block;
         }
 
         .btn-claim.disabled {
@@ -376,9 +377,10 @@
     <!-- PAGE 2: TASKS PAGE -->
     <div id="page-tasks" class="page-section">
         <div class="section-card">
-            <div class="section-title">Daily Morning Tasks</div>
-            <div class="section-desc">Complete daily tasks to boost earnings</div>
+            <div class="section-title">Daily Social Tasks</div>
+            <div class="section-desc">Complete tasks below to boost your earnings</div>
 
+            <!-- Daily Check-in -->
             <div class="task-item">
                 <div class="task-info">
                     <h4>Daily Check-in</h4>
@@ -387,6 +389,25 @@
                 <button class="btn-claim" id="btn-daily" onclick="claimDailyBonus()">Claim</button>
             </div>
 
+            <!-- YouTube Task -->
+            <div class="task-item">
+                <div class="task-info">
+                    <h4>Subscribe YouTube Channel</h4>
+                    <p>Visit & Subscribe (+ $0.30)</p>
+                </div>
+                <a href="https://www.youtube.com/@iuatasharalummah-j5p" target="_blank" class="btn-claim" id="btn-yt" onclick="completeSocialTask('yt', 0.30)">Subscribe</a>
+            </div>
+
+            <!-- Instagram Task -->
+            <div class="task-item">
+                <div class="task-info">
+                    <h4>Follow Instagram Page</h4>
+                    <p>Visit & Follow (+ $0.30)</p>
+                </div>
+                <a href="https://www.instagram.com/iuasunnahshow?stkn=eHdsajZpbHlucmQ2" target="_blank" class="btn-claim" id="btn-ig" onclick="completeSocialTask('ig', 0.30)">Follow</a>
+            </div>
+
+            <!-- Ads Challenge -->
             <div class="task-item">
                 <div class="task-info">
                     <h4>Watch 5 Ads Challenge</h4>
@@ -475,8 +496,9 @@
         // App State Variables
         let totalBalance = 0.00;
         let watchedAds = 0;
-        let invitedUsers = 0;
         let dailyClaimed = false;
+        let ytDone = false;
+        let igDone = false;
 
         // Telegram Integration
         let tg = window.Telegram.WebApp;
@@ -543,6 +565,27 @@
                 btn.onclick = null;
                 updateUI();
                 alert("Morning Bonus Claimed! +$0.20");
+            }
+        }
+
+        // Social Media Tasks
+        function completeSocialTask(type, reward) {
+            if (type === 'yt' && !ytDone) {
+                ytDone = true;
+                totalBalance += reward;
+                let btn = document.getElementById('btn-yt');
+                btn.innerText = "Done";
+                btn.classList.add('disabled');
+                btn.onclick = function(e){ e.preventDefault(); };
+                updateUI();
+            } else if (type === 'ig' && !igDone) {
+                igDone = true;
+                totalBalance += reward;
+                let btn = document.getElementById('btn-ig');
+                btn.innerText = "Done";
+                btn.classList.add('disabled');
+                btn.onclick = function(e){ e.preventDefault(); };
+                updateUI();
             }
         }
 
